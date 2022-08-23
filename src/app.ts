@@ -10,7 +10,6 @@ app.use(express.static('public'));
 
 const upload = multer({
 	dest: 'uploads/',
-	// you might also want to set some limits: https://github.com/expressjs/multer#limits
 });
 
 const handleError = (err: Error, res: express.Response) => {
@@ -29,7 +28,6 @@ app.post('/upload', upload.single('image' /* name attribute of <file> element in
 		const newFilename = path.join(__dirname, '../uploads', `${new Date().toISOString()}${filenameExtension}`);
 		fs.rename(tempPath, newFilename, (err) => {
 			execFile(path.join(__dirname, `../show-image.sh`), [newFilename]);
-			exec(`rsync --delete --ignore-existing -r ${path.join(__dirname, '../uploads/')} /tmp/wedding/website`);
 			if (err) return handleError(err, res);
 
 			res.status(200).sendFile(path.join(__dirname, '../public/success-page.html'));
